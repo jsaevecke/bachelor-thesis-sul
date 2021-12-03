@@ -1,10 +1,9 @@
 package com.julien.saevecke.learner.sul.producer;
 
-import com.julien.saevecke.learner.sul.config.RabbitMQConfig;
+import com.julien.saevecke.learner.sul.config.rabbitmq.RabbitMQConfig;
 import com.julien.saevecke.learner.sul.messages.Response;
 
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

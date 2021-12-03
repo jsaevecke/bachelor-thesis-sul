@@ -1,4 +1,4 @@
-package com.julien.saevecke.learner.sul.config;
+package com.julien.saevecke.learner.sul.config.rabbitmq;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

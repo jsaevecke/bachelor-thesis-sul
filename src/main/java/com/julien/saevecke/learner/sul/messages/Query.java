@@ -1,16 +1,15 @@
 package com.julien.saevecke.learner.sul.messages;
 
+import com.julien.saevecke.learner.sul.config.mealymachines.coffee.Input;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-//TODO: what does a query to a Mealy machine SUL look like?
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class Query {
-    private String input;
+    private Input input;
 }

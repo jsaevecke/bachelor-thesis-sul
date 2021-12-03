@@ -13,13 +13,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
-
-    //TODO: config file? properties?
     public static final String SUL_ROUTING_KEY = "SULRoutingKey";
     public static final String SUL_TOPIC_EXCHANGE = "SULTopicExchange";
     public static final String SUL_QUEUE = "SULQueue";
 
-    //TODO: bean?
     @Bean
     public Queue queue() {
         return new Queue(SUL_QUEUE);
@@ -31,7 +28,6 @@ public class RabbitMQConfig {
         return new TopicExchange(SUL_TOPIC_EXCHANGE);
     }
 
-    //TODO: routing key?
     @Bean
     public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(SUL_ROUTING_KEY);

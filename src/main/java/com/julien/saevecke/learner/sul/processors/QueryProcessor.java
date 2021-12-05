@@ -16,12 +16,12 @@ import java.util.Arrays;
 
 @Service
 public class QueryProcessor {
-    @Autowired
+    @Autowired //TODO: not recommended? why?
     SUL<Input, String> sul;
-    @Autowired
+    @Autowired //TODO: not recommended? why?
     private AmqpTemplate template;
 
-    @RabbitListener(queues = RabbitMQConfig.SUL_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.SUL_INPUT_QUEUE)
     public void consume(Query query) {
         sul.pre();
 
@@ -37,11 +37,16 @@ public class QueryProcessor {
             index++;
         }
 
-        System.out.println("output: " + Arrays.toString(outputSequence));
+        System.out.println("Output: " + Arrays.toString(outputSequence));
 
-        template.convertAndSend(RabbitMQConfig.SUL_QUEUE, new Response(
-            query,
-            outputSequence
-        ));
+        var response = new Response(query, outputSequence);
+
+        template.convertAndSend(
+                RabbitMQConfig.SUL_DIRECT_EXCHANGE,
+                RabbitMQConfig.SUL_OUTPUT_ROUTING_KEY,
+                response
+        );
+
+        System.out.println("Message send: " + response);
     }
 }

@@ -1,6 +1,8 @@
 package com.julien.saevecke.learner.sul.config.mealymachines.coffee;
 
 import de.learnlib.api.ObservableSUL;
+import de.learnlib.api.SUL;
+import de.learnlib.driver.util.MealySimulatorSUL;
 import de.learnlib.driver.util.ObservableMealySimulatorSUL;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.builders.AutomatonBuilders;
@@ -16,12 +18,11 @@ public class Machine {
     public static final String OUT_COFFEE = "coffee!";
 
     @Bean
-    public ObservableSUL<Integer, Input, String> sul() {
-        return new ObservableMealySimulatorSUL<>(coffeeMachine());
+    public SUL<Input, String> sul() {
+        return new MealySimulatorSUL<>(coffeeMachine());
     }
 
-    @Bean
-    public CompactMealy<Input, String> coffeeMachine() {
+    private CompactMealy<Input, String> coffeeMachine() {
         var alphabet = Alphabets.fromEnum(Input.class);
         var automaton = new CompactMealy<Input, String>(alphabet);
 

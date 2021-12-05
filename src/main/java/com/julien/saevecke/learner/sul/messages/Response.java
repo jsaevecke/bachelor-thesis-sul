@@ -12,5 +12,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class Response {
-    private String output;
+    private Query query;
+    private String[] sequence;
 }

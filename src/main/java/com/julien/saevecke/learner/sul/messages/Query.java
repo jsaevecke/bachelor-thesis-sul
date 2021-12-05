@@ -11,5 +11,5 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class Query {
-    private Input input;
+    private Input[] sequence;
 }

@@ -17,43 +17,48 @@ public class Machine {
     public static final String OUT_ERROR = "error";
     public static final String OUT_COFFEE = "coffee!";
 
+    public static final String POD = "POD";
+    public static final String CLEAN = "CLEAN";
+    public static final String WATER = "WATER";
+    public static final String BUTTON = "BUTTON";
+
     @Bean
-    public SUL<Input, String> sul() {
+    public SUL<String, String> sul() {
         return new MealySimulatorSUL<>(coffeeMachine());
     }
 
-    private CompactMealy<Input, String> coffeeMachine() {
-        var alphabet = Alphabets.fromEnum(Input.class);
-        var automaton = new CompactMealy<Input, String>(alphabet);
+    private CompactMealy<String, String> coffeeMachine() {
+        var alphabet = Alphabets.fromArray(POD, CLEAN, WATER, BUTTON);
+        var automaton = new CompactMealy<String, String>(alphabet);
 
         // TODO: put states and output in separate classes
         // @formatter:off
         return AutomatonBuilders.forMealy(automaton)
                 .withInitial("a")
                 .from("a")
-                .on(Input.WATER).withOutput(OUT_OK).to("c")
-                .on(Input.POD).withOutput(OUT_OK).to("b")
-                .on(Input.BUTTON).withOutput(OUT_ERROR).to("f")
-                .on(Input.CLEAN).withOutput(OUT_OK).loop()
+                .on(WATER).withOutput(OUT_OK).to("c")
+                .on(POD).withOutput(OUT_OK).to("b")
+                .on(BUTTON).withOutput(OUT_ERROR).to("f")
+                .on(CLEAN).withOutput(OUT_OK).loop()
                 .from("b")
-                .on(Input.WATER).withOutput(OUT_OK).to("d")
-                .on(Input.POD).withOutput(OUT_OK).loop()
-                .on(Input.BUTTON).withOutput(OUT_ERROR).to("f")
-                .on(Input.CLEAN).withOutput(OUT_OK).to("a")
+                .on(WATER).withOutput(OUT_OK).to("d")
+                .on(POD).withOutput(OUT_OK).loop()
+                .on(BUTTON).withOutput(OUT_ERROR).to("f")
+                .on(CLEAN).withOutput(OUT_OK).to("a")
                 .from("c")
-                .on(Input.WATER).withOutput(OUT_OK).loop()
-                .on(Input.POD).withOutput(OUT_OK).to("d")
-                .on(Input.BUTTON).withOutput(OUT_ERROR).to("f")
-                .on(Input.CLEAN).withOutput(OUT_OK).to("a")
+                .on(WATER).withOutput(OUT_OK).loop()
+                .on(POD).withOutput(OUT_OK).to("d")
+                .on(BUTTON).withOutput(OUT_ERROR).to("f")
+                .on(CLEAN).withOutput(OUT_OK).to("a")
                 .from("d")
-                .on(Input.WATER, Input.POD).withOutput(OUT_OK).loop()
-                .on(Input.BUTTON).withOutput(OUT_COFFEE).to("e")
-                .on(Input.CLEAN).withOutput(OUT_OK).to("a")
+                .on(WATER, POD).withOutput(OUT_OK).loop()
+                .on(BUTTON).withOutput(OUT_COFFEE).to("e")
+                .on(CLEAN).withOutput(OUT_OK).to("a")
                 .from("e")
-                .on(Input.WATER, Input.POD, Input.BUTTON).withOutput(OUT_ERROR).to("f")
-                .on(Input.CLEAN).withOutput(OUT_OK).to("a")
+                .on(WATER, POD, BUTTON).withOutput(OUT_ERROR).to("f")
+                .on(CLEAN).withOutput(OUT_OK).to("a")
                 .from("f")
-                .on(Input.WATER, Input.POD, Input.BUTTON, Input.CLEAN).withOutput(OUT_ERROR).loop()
+                .on(WATER, POD, BUTTON, CLEAN).withOutput(OUT_ERROR).loop()
                 .create();
         // @formatter:on
     }

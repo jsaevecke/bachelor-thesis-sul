@@ -21,16 +21,16 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: RABBIT_HOST 
+        - name: SPRING_RABBITMQ_HOST
           value: "rabbitmq-0.rabbitmq.rabbits.svc.cluster.local"
-        - name: RABBIT_PORT
+        - name: SPRING_RABBITMQ_PORT
           value: "5672"
-        - name: RABBIT_USERNAME
+        - name: SPRING_RABBITMQ_USERNAME
           valueFrom:
             secretKeyRef:
               name: rabbitmq-secret
               key: RABBIT_USERNAME
-        - name: RABBIT_PASSWORD
+        - name: SPRING_RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               name: rabbitmq-secret

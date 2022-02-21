@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ba-sul
+  labels:
+    app: ba-sul
+spec:
+  selector:
+    matchLabels:
+      app: ba-sul
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ba-sul
+    spec:
+      containers:
+      - name: ba-sul
+        image: springio/bachelor-sul-docker:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        env:
+        - name: RABBIT_HOST 
+          value: "rabbitmq-0.rabbitmq.rabbits.svc.cluster.local"
+        - name: RABBIT_PORT
+          value: "5672"
+        - name: RABBIT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: RABBIT_USERNAME
+        - name: RABBIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-secret
+              key: RABBIT_PASSWORD

@@ -1,4 +1,9 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: sul
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: rabbitmq-secret
@@ -10,22 +15,22 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bachelor-sul
+  name: coffee-sul
   labels:
-    app: bachelor-sul
+    app: coffee-sul
 spec:
   selector:
     matchLabels:
-      app: bachelor-sul
+      app: coffee-sul
   replicas: 1
   template:
     metadata:
       labels:
-        app: bachelor-sul
+        app: coffee-sul
     spec:
       containers:
-      - name: bachelor-sul
-        image: jsaev/bachelor-sul:latest
+      - name: coffee-sul
+        image: jsaev/coffee-sul:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 80

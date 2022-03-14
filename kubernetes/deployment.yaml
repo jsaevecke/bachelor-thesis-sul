@@ -1,22 +1,31 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rabbitmq-secret
+type: Opaque
+data:
+  RABBIT_USERNAME: Z3Vlc3Q= #guest
+  RABBIT_PASSWORD: Z3Vlc3Q= #guest
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ba-sul
+  name: bachelor-sul
   labels:
-    app: ba-sul
+    app: bachelor-sul
 spec:
   selector:
     matchLabels:
-      app: ba-sul
+      app: bachelor-sul
   replicas: 1
   template:
     metadata:
       labels:
-        app: ba-sul
+        app: bachelor-sul
     spec:
       containers:
-      - name: ba-sul
-        image: springio/bachelor-sul-docker:latest
+      - name: bachelor-sul
+        image: jsaev/bachelor-sul:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 80

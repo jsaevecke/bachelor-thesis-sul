@@ -16,6 +16,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: coffee-sul
+  namespace: sul
   labels:
     app: coffee-sul
 spec:

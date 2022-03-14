@@ -12,6 +12,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 public class QueryProcessor {
     @Autowired
@@ -23,11 +25,21 @@ public class QueryProcessor {
     public void consume(MembershipQuery membershipQuery) {
         sul.pre();
 
-        System.out.println("Message received from queue: " + membershipQuery.toString());
+        System.out.println("Message received with uuid: " + membershipQuery.getUuid());
 
         var query = membershipQuery.getQuery();
         var suffix = query.getSuffix(); // with output
         var prefix = query.getPrefix(); // without output
+
+        // artificial delay for testing purposes - kubernetes autoscaling
+        var delayInSeconds = membershipQuery.getDelayInSeconds();
+        if(delayInSeconds >= 1) {
+            try {
+                TimeUnit.SECONDS.sleep(delayInSeconds);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
 
         try {
             for (var input : prefix) {
@@ -42,9 +54,7 @@ public class QueryProcessor {
 
             query.setOutput(wb.toWord().asList());
 
-            var response = new MembershipQuery(membershipQuery.getUuid(), membershipQuery.getQuery());
-
-            System.out.println("UUID: " + response.getUuid() + " output: " + wb.toWord());
+            var response = new MembershipQuery(membershipQuery.getUuid(), System.getenv("HOSTNAME"), membershipQuery.getDelayInSeconds(), membershipQuery.getQuery());
 
             template.convertAndSend(
                     RabbitMQConfig.SUL_DIRECT_EXCHANGE,
@@ -52,7 +62,7 @@ public class QueryProcessor {
                     response
             );
 
-            System.out.println("Message send: " + response);
+            System.out.println("Answered query with uuid: " + response.getUuid());
         } finally {
             sul.post();
         }

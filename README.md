@@ -1,6 +1,7 @@
 # bachelor-thesis-sul
 System under learning
 
+# for local deployment
 1. install microk8s
 2. sudo docker build -t jsaev/bachelor-sul
 3. sudo docker save jsaev/bachelor-sul > bachelor-sul.tar

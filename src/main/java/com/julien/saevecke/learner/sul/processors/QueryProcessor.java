@@ -12,6 +12,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -54,7 +56,9 @@ public class QueryProcessor {
 
             query.setOutput(wb.toWord().asList());
 
-            var response = new MembershipQuery(membershipQuery.getUuid(), System.getenv("HOSTNAME"), membershipQuery.getDelayInSeconds(), membershipQuery.getQuery());
+            var podName = java.net.InetAddress.getLocalHost().getHostName();
+
+            var response = new MembershipQuery(membershipQuery.getUuid(), podName, membershipQuery.getDelayInSeconds(), membershipQuery.getQuery());
 
             template.convertAndSend(
                     RabbitMQConfig.SUL_DIRECT_EXCHANGE,
@@ -63,6 +67,8 @@ public class QueryProcessor {
             );
 
             System.out.println("Answered query with uuid: " + response.getUuid());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
         } finally {
             sul.post();
         }

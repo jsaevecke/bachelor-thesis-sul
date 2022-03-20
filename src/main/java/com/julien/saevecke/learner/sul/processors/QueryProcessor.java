@@ -1,6 +1,5 @@
 package com.julien.saevecke.learner.sul.processors;
 
-import com.julien.saevecke.learner.sul.config.mealymachines.coffee.Input;
 import com.julien.saevecke.learner.sul.config.rabbitmq.RabbitMQConfig;
 import com.julien.saevecke.learner.sul.messages.MembershipQuery;
 
@@ -10,10 +9,10 @@ import net.automatalib.words.WordBuilder;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.net.UnknownHostException;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -23,11 +22,14 @@ public class QueryProcessor {
     @Autowired
     private AmqpTemplate template;
 
+    @Value("${MY_POD_NAME}")
+    private String hostname;
+
     @RabbitListener(queues = RabbitMQConfig.SUL_INPUT_QUEUE)
     public void consume(MembershipQuery membershipQuery) {
         sul.pre();
 
-        System.out.println("Message received with uuid: " + membershipQuery.getUuid());
+        System.out.println(hostname + " received message with uuid: " + membershipQuery.getUuid());
 
         var query = membershipQuery.getQuery();
         var suffix = query.getSuffix(); // with output
@@ -56,9 +58,7 @@ public class QueryProcessor {
 
             query.setOutput(wb.toWord().asList());
 
-            var podName = java.net.InetAddress.getLocalHost().getHostName();
-
-            var response = new MembershipQuery(membershipQuery.getUuid(), podName, membershipQuery.getDelayInSeconds(), membershipQuery.getQuery());
+            var response = new MembershipQuery(membershipQuery.getUuid(), hostname, membershipQuery.getDelayInSeconds(), membershipQuery.getQuery());
 
             template.convertAndSend(
                     RabbitMQConfig.SUL_DIRECT_EXCHANGE,
@@ -66,9 +66,7 @@ public class QueryProcessor {
                     response
             );
 
-            System.out.println("Answered query with uuid: " + response.getUuid());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+//            System.out.println("Answered query with uuid: " + response.getUuid());
         } finally {
             sul.post();
         }

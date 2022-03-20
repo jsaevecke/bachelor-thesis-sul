@@ -32,11 +32,15 @@ spec:
     spec:
       containers:
       - name: coffee-sul
-        image: jsaev/coffee-sul:latest
+        image: coffee-sul:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 80
         env:
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         - name: SPRING_RABBITMQ_HOST
           value: "rabbitmq-0.rabbitmq.rabbits.svc.cluster.local"
         - name: SPRING_RABBITMQ_PORT

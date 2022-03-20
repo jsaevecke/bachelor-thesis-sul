@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keda-rabbitmq-secret
+  namespace: "sul"
+data:
+  host: "aHR0cDovL2d1ZXN0Omd1ZXN0QHJhYmJpdG1xLTAucmFiYml0bXEucmFiYml0cy5zdmMuY2x1c3Rlci5sb2NhbDoxNTY3Mi92aG9zdA=="
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-rabbitmq-conn
+  namespace: "sul"
+spec:
+  secretTargetRef:
+  - parameter: host
+    name: keda-rabbitmq-secret
+    key: host
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: rabbitmq-scaledobject
+  namespace: "sul"
+  labels:
+    deploymentName: coffee-sul
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: coffee-sul
+  pollingInterval: 1  # Optional. Default: 30 seconds
+  cooldownPeriod:  15 # Optional. Default: 300 seconds
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: rabbitmq
+    metadata:
+      protocol: http
+      queueName: "sul_input_q"
+      queueLength: "1"
+      vhostName: /
+    authenticationRef:
+      name: keda-trigger-auth-rabbitmq-conn

@@ -65,10 +65,10 @@ public class QueryProcessor {
                     RabbitMQConfig.SUL_OUTPUT_ROUTING_KEY,
                     response
             );
-
-//            System.out.println("Answered query with uuid: " + response.getUuid());
         } finally {
             sul.post();
         }
+
+        System.exit(0);
     }
 }
